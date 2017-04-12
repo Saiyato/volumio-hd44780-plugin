@@ -1,0 +1,100 @@
+{
+	"page": {
+		"label": "TRANSLATE.LCD.LCDCONF"
+	},
+	"sections": [{
+		"id": "section_hostconf",
+		"element": "section",
+		"label": "TRANSLATE.LCD.HOST",
+		"icon": "fa-music",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/HD44780",
+			"method": "updateSoundCard"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.LCD.SAVE",
+			"data": ["host"]
+		},
+		"content": [{
+			"id": "host",
+			"element": "input",
+			"type": "text",
+			"doc": "LCD server name or IP.",
+			"label": "TRANSLATE.LCD.HOSTNAME",
+			"value": "127.0.0.1"
+		}]
+	},
+	{
+		"id": "section_soundconf",
+		"element": "section",
+		"label": "TRANSLATE.LCD.SOUNDCARD",
+		"icon": "fa-music",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/Kodi",
+			"method": "updateSoundCard"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.LCD.SAVE",
+			"data": ["soundcard_index"]
+		},
+		"content": [{
+			"id": "soundcard_index",
+			"element": "select",
+			"doc": "The index of the soundcard you wish to use for the LCD client output.",
+			"label": "TRANSLATE.LCD.CARD_INDEX",
+			"value": {
+				"value": 0,
+				"label": "[0] Default rPi soundcard"
+			},
+			"options": []
+		}]
+	},
+	{
+		"id": "section_sampleconf",
+		"element": "section",
+		"label": "TRANSLATE.LCD.SAMPLING",
+		"icon": "fa-cogs",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/Kodi",
+			"method": "updateBootConfig"
+		},
+		"saveButton": {
+			"label": "TRANSLATE.LCD.SAVE",
+			"data": ["sample_rate",
+			"bit_depth",
+			"channels"]
+		},
+		"content": [{
+			"id": "sample_rate",
+			"element": "select",
+			"doc": "The number of samples per second.",
+			"label": "TRANSLATE.LCD.SAMPLE_RATE",
+			"value": {
+				"value": 48,
+				"label": "48000kHz"
+			},
+			"options": []
+		},
+		{
+			"id": "bit_depth",
+			"element": "select",
+			"doc": "The number of bits of information in each sample.",
+			"label": "TRANSLATE.LCD.BIT_DEPTH",
+			"value": {
+				"value": 16,
+				"label": "16 bits"
+			},
+			"options": []
+		},
+		{
+			"id": "channels",
+			"element": "text",
+			"doc": "The amount of channels to output (2 = stereo).",
+			"label": "TRANSLATE.LCD.CHANNELS",
+			"value": "2"
+		}]
+	}]
+}

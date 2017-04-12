@@ -1,0 +1,14 @@
+{
+  "address": {
+    "type": "string",
+    "value": "0x3F"
+  },
+  "columns": {
+    "type": "string",
+    "value": "16"
+  },
+  "rows": {
+    "type": "string",
+    "value": "2"
+  }
+}
