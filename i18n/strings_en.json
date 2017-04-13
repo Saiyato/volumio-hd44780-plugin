@@ -1,18 +1,24 @@
 {
-	"SNAPCAST":{
-	"SNAPCASTCONF":"SnapCast Configuration",
-	"HOST":"SnapCast host settings",
-	"HOSTNAME":"SnapCast host (name/IP)",
-	"SOUNDCARD":"Soundcard settings",
-	"CARD_INDEX":"Index of the soundcard you wish to use",
-	"SAMPLING":"Sampling settings",
-	"SAMPLE_RATE":"Sample rate",
-	"BIT_DEPTH":"Bit depth",
-	"CHANNELS":"Sound channels (2 = stereo)",
-	"LOADED":"Loaded ALSA config",
-	"OUTPUT_DEVICE":"ALSA output device",
-	"MIXER":"ALSA mixer",
-	"SOFTWARE_MIXER_INDEX":"ALSA software mixer index",
+	"HD44780":{
+	"LCDCONF":"HD44780 Configuration",
+	"USERCONF":"Personal settings",
+	"HELLO0":"Hello message row 1",
+	"HELLO1":"Hello message row 2",
+	"HELLO2":"Hello message row 3",
+	"HELLO3":"Hello message row 4",
+	"GOODBYE0":"Goodbye message row 1",
+	"GOODBYE1":"Goodbye message row 2",
+	"GOODBYE2":"Goodbye message row 3",
+	"GOODBYE3":"Goodbye message row 4",
+	"SPEED":"Text scrolling speed",
+	"DISPLAYCONF":"Display configuration",
+	"PORT":"I2C port",
+	"COLUMNS":"Display columns",
+	"ROWS":"Display rows",
+	"CHAR_MAP":"Character mapping",
+	"DRIVERCONF":"Driver configuration",
+	"DRIVER_PATH":"Path to driver",
+	"CONNECTION_TYPE":"Driver connection type",
 	"SAVE": "Save"
 	}
 }

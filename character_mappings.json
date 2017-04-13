@@ -1,0 +1,10 @@
+{"mappings":[
+  {"cIndex":"0","mapping":"hd44780_default"},
+  {"cIndex":"1","mapping":"hd44780_euro"},
+  {"cIndex":"2","mapping":"ea_ks0073"},
+  {"cIndex":"2","mapping":"sed1278f_0b"},
+  {"cIndex":"2","mapping":"hd44780_koi8_r (requires recompilation)"},
+  {"cIndex":"2","mapping":"hd44780_cp1251 (requires recompilation)"},
+  {"cIndex":"2","mapping":"hd44780_8859_5 (requires recompilation)"},
+  {"cIndex":"2","mapping":"upd16314 (requires recompilation)"}
+]}

@@ -1,18 +1,17 @@
-## http://tomatpasser.dk/gpio-buttons.zip
-
-## LCD
+#!/bin/bash
+## HD44780 installation script
 apt-get update
 apt-get --assume-yes install -y -q python-smbus i2c-tools lcdproc python-mpd python-pip zip
 
 pip install mpdlcd
 
-wget -O /etc/mpdlcd.conf https://raw.githubusercontent.com/rbarrois/mpdlcd/master/mpdlcd.conf
+wget -O /etc/mpdlcd.conf https://github.com/Saiyato/volumio-hd44780-plugin/blob/master/mpdlcd.conf
 
 # Driver installation
 mkdir /home/volumio/raspdrivers
 
 # // ARMv6 -> rPi 1 A/A+/B/B+/Zero
-wget -O /home/volumio/raspdrivers/hd44780.so https://github.com/wilberforce/lcdproc/raw/master/hd44780.so
+wget -O /home/volumio/raspdrivers/hd44780.so https://github.com/Saiyato/volumio-hd44780-plugin/blob/master/Driver/hd44780.so
 
 rm /etc/LCDd.conf
 
@@ -206,6 +205,15 @@ i2c_line_D5=0x20
 i2c_line_D6=0x40
 i2c_line_D7=0x80
 
+# If the display is connected to non-default GPIO pins, the driver can
+# recognise these with pin assignment commands. 
+# commented out as these are the defaults
+#D7=18
+#D6=23
+#D5=24
+#D4=25
+#RS=7
+#EN=8
 
 # For multiple combined displays: how many lines does each display have.
 # Vspan=2,2 means both displays have 2 lines.

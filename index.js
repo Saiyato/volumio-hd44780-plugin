@@ -7,10 +7,10 @@ var config = new (require('v-conf'))();
 var exec = require('child_process').exec;
 
 
-// Define the ControllerSnapCast class
-module.exports = ControllerSnapCast;
+// Define the ControllerHD44780 class
+module.exports = ControllerHD44780;
 
-function ControllerSnapCast(context) 
+function ControllerHD44780(context) 
 {
 	var self = this;
 
@@ -21,10 +21,10 @@ function ControllerSnapCast(context)
 
 }
 
-ControllerSnapCast.prototype.onVolumioStart = function()
+ControllerHD44780.prototype.onVolumioStart = function()
 {
 	var self = this;
-	self.logger.info("SnapCast initiated");
+	self.logger.info("HD44780 initiated");
 	
 	this.configFile = this.commandRouter.pluginManager.getConfigurationFile(this.context, 'config.json');
 	self.getConf(this.configFile);
@@ -36,64 +36,26 @@ ControllerSnapCast.prototype.onVolumioStart = function()
 	return libQ.resolve();	
 }
 
-ControllerSnapCast.prototype.getConfigurationFiles = function()
+ControllerHD44780.prototype.getConfigurationFiles = function()
 {
 	return ['config.json'];
 };
 
 // Plugin methods -----------------------------------------------------------------------------
-ControllerSnapCast.prototype.onStop = function() {
+ControllerHD44780.prototype.onStop = function() {
 	var self = this;
 
-	var defer=libQ.defer();
-
-	exec("/usr/bin/sudo /etc/init.d/snapserver stop", {uid:1000,gid:1000}, function (error, stdout, stderr) {
-		if (error !== null) {
-			self.commandRouter.pushConsoleMessage('The following error occurred while stopping SnapCast server: ' + error);
-			defer.reject();
-		}
-		else {
-			exec("/usr/bin/sudo /etc/init.d/snapclient stop", {uid:1000,gid:1000}, function (error, stdout, stderr) {
-				if (error !== null) {
-					self.commandRouter.pushConsoleMessage('The following error occurred while stopping SnapCast client: ' + error);
-					defer.reject();
-				}
-			});
-			
-			self.commandRouter.pushConsoleMessage('SnapCast server and client killed');
-			defer.resolve();
-		}
-	});
-
-	return defer.promise;
+	return libQ.resolve();
 };
 
-ControllerSnapCast.prototype.onStart = function() {
+ControllerHD44780.prototype.onStart = function() {
 	var self = this;
-	var defer=libQ.defer();
+	// var defer=libQ.defer();
 
-	exec("/usr/bin/sudo /etc/init.d/snapserver restart", {uid:1000,gid:1000}, function (error, stdout, stderr) {
-		if (error !== null) {
-			self.commandRouter.pushConsoleMessage('The following error occurred while stopping SnapCast server: ' + error);
-			defer.reject();
-		}
-		else {
-			exec("/usr/bin/sudo /etc/init.d/snapclient restart", {uid:1000,gid:1000}, function (error, stdout, stderr) {
-				if (error !== null) {
-					self.commandRouter.pushConsoleMessage('The following error occurred while stopping SnapCast client: ' + error);
-					defer.reject();
-				}
-			});
-			
-			self.commandRouter.pushConsoleMessage('SnapCast server and client started');
-			defer.resolve();
-		}
-	});
-
-	return defer.promise;
+	return libQ.resolve();
 };
 
-ControllerSnapCast.prototype.stop = function() 
+ControllerHD44780.prototype.stop = function() 
 {
 	// Kill process?
 	self.logger.info("performing stop action");	
@@ -102,7 +64,7 @@ ControllerSnapCast.prototype.stop = function()
 };
 
 
-ControllerSnapCast.prototype.onRestart = function() 
+ControllerHD44780.prototype.onRestart = function() 
 {
 	// Do nothing
 	self.logger.info("performing onRestart action");	
@@ -110,17 +72,17 @@ ControllerSnapCast.prototype.onRestart = function()
 	var self = this;
 };
 
-ControllerSnapCast.prototype.onInstall = function() 
+ControllerHD44780.prototype.onInstall = function() 
 {
 	var self = this;
 };
 
-ControllerSnapCast.prototype.onUninstall = function() 
+ControllerHD44780.prototype.onUninstall = function() 
 {
 	// Uninstall.sh?
 };
 
-ControllerSnapCast.prototype.getUIConfig = function() {
+ControllerHD44780.prototype.getUIConfig = function() {
     var self = this;
 	var defer = libQ.defer();    
     var lang_code = this.commandRouter.sharedVars.get('language_code');
@@ -128,39 +90,45 @@ ControllerSnapCast.prototype.getUIConfig = function() {
 	self.getConf(this.configFile);
 	self.logger.info("Reloaded the config file");
 	
-	var ratesdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/sample_rates.json'),  'utf8', {throws: false});
-	var bitdephtdata = fs.readJsonSync(('/data/plugins/miscellanea/SnapCast/bit_depths.json'),  'utf8', {throws: false});
+	var charmappings = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/character_mappings.json'),  'utf8', {throws: false});
+	var contypes = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/connection_types.json'),  'utf8', {throws: false});
 	
     self.commandRouter.i18nJson(__dirname+'/i18n/strings_' + lang_code + '.json',
     __dirname + '/i18n/strings_en.json',
     __dirname + '/UIConfig.json')
     .then(function(uiconf)
     {
-        uiconf.sections[0].content[0].value = self.config.get('host');
+		// User configuration
+        uiconf.sections[0].content[0].value = self.config.get('hello0');
+		uiconf.sections[0].content[1].value = self.config.get('hello1');
+		uiconf.sections[0].content[2].value = self.config.get('hello2');
+		uiconf.sections[0].content[3].value = self.config.get('hello3');
+		uiconf.sections[0].content[4].value = self.config.get('goodbye0');
+		uiconf.sections[0].content[5].value = self.config.get('goodbye1');
+		uiconf.sections[0].content[6].value = self.config.get('goodbye2');
+		uiconf.sections[0].content[7].value = self.config.get('goodbye3');
+		uiconf.sections[0].content[8].value = self.config.get('speed');
 		
-		uiconf.sections[1].content[0].value = self.config.get('soundcard_index');
+		// Display configuration
+		uiconf.sections[1].content[0].value = self.config.get('port');
+		uiconf.sections[1].content[1].value = self.config.get('columns');
+		uiconf.sections[1].content[2].value = self.config.get('rows');
+				
+		for (var n = 0; n < charmappings.mappings.length; n++){
+			self.configManager.pushUIConfigParam(uiconf, 'sections[1].content[3].options', {
+				value: charmappings.mappings[n].cIndex,
+				label: charmappings.mappings[n].mapping
+			});
+		}
 		
-		for (var n = 0; n < ratesdata.sample_rates.length; n++){
+		// Driver configuration
+		uiconf.sections[2].content[0].value = self.config.get('driver_path');
+		for (var n = 0; n < contypes.connections.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[0].options', {
-				value: ratesdata.sample_rates[n].rate,
-				label: ratesdata.sample_rates[n].name
+				value: contypes.connections[n].type,
+				label: contypes.connections[n].connection
 			});
 		}
-		//uiconf.sections[2].content[0].value = self.config.get('sample_rate');
-		
-		for (var n = 0; n < bitdephtdata.bit_depths.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[1].options', {
-				value: bitdephtdata.bit_depths[n].bits,
-				label: bitdephtdata.bit_depths[n].name
-			});
-		}
-		//uiconf.sections[2].content[1].value = self.config.get('bit_depth');
-		
-		uiconf.sections[2].content[2].value = self.config.get('channels');
-		
-		uiconf.sections[3].content[0].value = self.commandRouter.sharedVars.get('alsa.outputdevice');
-		uiconf.sections[3].content[1].value = self.commandRouter.sharedVars.get('alsa.outputdevicemixer');
-		uiconf.sections[3].content[2].value = self.getAdditionalConf('audio_interface', 'alsa_controller', 'softvolumenumber');
 		
         defer.resolve(uiconf);
     })
@@ -172,7 +140,7 @@ ControllerSnapCast.prototype.getUIConfig = function() {
     return defer.promise;
 };
 
-ControllerSnapCast.prototype.setUIConfig = function(data) {
+ControllerHD44780.prototype.setUIConfig = function(data) {
 	var self = this;
 	
 	self.logger.info("Updating UI config");
@@ -181,7 +149,7 @@ ControllerSnapCast.prototype.setUIConfig = function(data) {
 	return libQ.resolve();
 };
 
-ControllerSnapCast.prototype.getConf = function(configFile) {
+ControllerHD44780.prototype.getConf = function(configFile) {
 	var self = this;
 	this.config = new (require('v-conf'))()
 	this.config.loadFile(configFile)
@@ -189,19 +157,19 @@ ControllerSnapCast.prototype.getConf = function(configFile) {
 	return libQ.resolve();
 };
 
-ControllerSnapCast.prototype.setConf = function(conf) {
+ControllerHD44780.prototype.setConf = function(conf) {
 	var self = this;
 	return libQ.resolve();
 };
 
 // Public Methods ---------------------------------------------------------------------------------------
 
-ControllerSnapCast.prototype.getAdditionalConf = function (type, controller, data) {
+ControllerHD44780.prototype.getAdditionalConf = function (type, controller, data) {
 	var self = this;
 	return self.commandRouter.executeOnPlugin(type, controller, 'getConfigParam', data);
 };
 
-ControllerSnapCast.prototype.restartKodi = function ()
+ControllerHD44780.prototype.restartKodi = function ()
 {
 	var self = this;
 	var defer=libQ.defer();
@@ -222,15 +190,7 @@ ControllerSnapCast.prototype.restartKodi = function ()
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.updateBootConfig = function (data) 
-{
-	var self = this;	
-	var defer = libQ.defer();	
-
-	return defer.promise;
-}
-
-ControllerSnapCast.prototype.updateSoundConfig = function (data)
+ControllerHD44780.prototype.updateSoundConfig = function (data)
 {
 	var self = this;
 	var defer = libQ.defer();
@@ -251,47 +211,7 @@ ControllerSnapCast.prototype.updateSoundConfig = function (data)
 	return defer.promise;
 }
 
-ControllerSnapCast.prototype.writeBootConfig = function (config) 
-{
-	var self = this;
-	var defer = libQ.defer();
-	
-	self.updateConfigFile("gpu_mem_1024", self.config.get('gpu_mem_1024'), "/boot/config.txt")
-	.then(function (gpu512) {
-		self.updateConfigFile("gpu_mem_512", self.config.get('gpu_mem_512'), "/boot/config.txt");
-	})
-	.then(function (gpu256) {
-		self.updateConfigFile("gpu_mem_256", self.config.get('gpu_mem_256'), "/boot/config.txt");
-	})
-	.then(function (hdmi) {
-		self.updateConfigFile("hdmi_force_hotplug", self.config.get('hdmihotplug'), "/boot/config.txt");
-	})
-	.fail(function(e)
-	{
-		defer.reject(new Error());
-	});
-	
-	self.commandRouter.pushToastMessage('success', "Configuration update", "A reboot is required, changes have been made to /boot/config.txt");
-
-	return defer.promise;
-}
-
-ControllerSnapCast.prototype.writeSoundConfig = function (soundConfig)
-{
-	var self = this;
-	var defer = libQ.defer();
-	
-	self.updateAsoundConfig(soundConfig['usedac'])	
-	.then(function (kali) {
-		self.updateKodiConfig(soundConfig['kalidelay']);
-	})
-	
-	self.commandRouter.pushToastMessage('success', "Configuration update", "Successfully updated sound settings");
-	
-	return defer.promise;
-}
-
-ControllerSnapCast.prototype.updateConfigFile = function (setting, value, file)
+ControllerHD44780.prototype.updateConfigFile = function (setting, value, file)
 {
 	var self = this;
 	var defer = libQ.defer();
@@ -304,64 +224,6 @@ ControllerSnapCast.prototype.updateConfigFile = function (setting, value, file)
 	
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed '/^" + setting + "=/{h;s/=.*/=" + castValue + "/};${x;/^$/{s//" + setting + "=" + castValue + "/;H};x}' -i " + file;
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-		
-		defer.resolve();
-	});
-	
-	return defer.promise;
-}
-
-ControllerSnapCast.prototype.updateAsoundConfig = function (useDac)
-{
-	var self = this;
-	var defer = libQ.defer();
-	var command;
-	
-	if(useDac)
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|0|1|g' /etc/asound.conf";
-	}
-	else
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|1|0|g' /etc/asound.conf";
-	}
-	
-	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-		
-		defer.resolve();
-	});
-	
-	return defer.promise;
-}
-
-ControllerSnapCast.prototype.updateKodiConfig = function (useKaliDelay)
-{
-	var self = this;
-	var defer = libQ.defer();
-	var command;
-	var secondCommand;
-	
-	if(useKaliDelay)
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.700000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.700000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-	}
-	else
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.000000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.000000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-	}
-	
-	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-	});
-	
-	exec(secondCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
 			console.log(stderr);
 		

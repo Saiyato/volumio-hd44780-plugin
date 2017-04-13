@@ -1,5 +1,41 @@
 {
-  "address": {
+  "hello0": {
+    "type": "string",
+    "value": "  Welcome to"
+  },
+  "hello1": {
+    "type": "string",
+    "value": "  VOLUMIO2!"
+  },
+  "hello2": {
+    "type": "string",
+    "value": "    And also"
+  },
+  "hello3": {
+    "type": "string",
+    "value": "  Cheers mate!"
+  },
+  "goodbye0": {
+    "type": "string",
+    "value": "Thanks for using"
+  },
+  "goodbye1": {
+    "type": "string",
+    "value": "  VOLUMIO2!"
+  },
+  "goodbye2": {
+    "type": "string",
+    "value": "    And also"
+  },
+  "goodbye3": {
+    "type": "string",
+    "value": "  Cheers mate!"
+  },
+  "speed": {
+    "type": "string",
+    "value": "10"
+  },
+  "port": {
     "type": "string",
     "value": "0x3F"
   },
@@ -10,5 +46,17 @@
   "rows": {
     "type": "string",
     "value": "2"
+  },
+  "char_map": {
+    "type": "string",
+    "value": "hd44780_default"
+  },
+  "driver_path": {
+    "type": "string",
+    "value": "/home/volumio/raspdrivers/"
+  },
+  "connection_type": {
+    "type": "string",
+    "value": "i2c"
   }
 }

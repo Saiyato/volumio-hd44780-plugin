@@ -3,98 +3,243 @@
 		"label": "TRANSLATE.LCD.LCDCONF"
 	},
 	"sections": [{
-		"id": "section_hostconf",
+		"id": "section_userconf",
 		"element": "section",
-		"label": "TRANSLATE.LCD.HOST",
+		"label": "TRANSLATE.LCD.USERCONF",
 		"icon": "fa-music",
 		"onSave": {
 			"type": "controller",
 			"endpoint": "miscellanea/HD44780",
-			"method": "updateSoundCard"
+			"method": "updateLCDdConfig"
 		},
 		"saveButton": {
 			"label": "TRANSLATE.LCD.SAVE",
-			"data": ["host"]
+			"data": [
+				"hello0",
+				"hello1",
+				"hello2",
+				"hello3",
+				"goodbye0",
+				"goodbye1",
+				"goodbye2",
+				"goodbye3",
+				"speed"
+			]
 		},
-		"content": [{
-			"id": "host",
-			"element": "input",
-			"type": "text",
-			"doc": "LCD server name or IP.",
-			"label": "TRANSLATE.LCD.HOSTNAME",
-			"value": "127.0.0.1"
-		}]
+		"content": [
+			{
+				"id": "hello0",
+				"element": "input",
+				"type": "text",
+				"doc": "Hello message; shown on startup.",
+				"label": "TRANSLATE.LCD.HELLO0",
+				"value": "  Welcome to"
+			},
+			{
+				"id": "hello1",
+				"element": "input",
+				"type": "text",
+				"doc": "Hello message; shown on startup.",
+				"label": "TRANSLATE.LCD.HELLO1",
+				"value": "  VOLUMIO2!"
+			},
+			{
+				"id": "hello2",
+				"element": "input",
+				"type": "text",
+				"doc": "Hello message; shown on startup.",
+				"label": "TRANSLATE.LCD.HELLO2",
+				"value": "    And also"
+			},			
+			{
+				"id": "hello3",
+				"element": "input",
+				"type": "text",
+				"doc": "Hello message; shown on startup.",
+				"label": "TRANSLATE.LCD.HELLO3",
+				"value": "  Cheers mate!"
+			},
+			{
+				"id": "goodbye0",
+				"element": "input",
+				"type": "text",
+				"doc": "Goodbye message; shown on shutdown.",
+				"label": "TRANSLATE.LCD.GOODBYE0",
+				"value": "  Thanks for using"
+			},
+			{
+				"id": "goodbye1",
+				"element": "input",
+				"type": "text",
+				"doc": "Goodbye message; shown on shutdown.",
+				"label": "TRANSLATE.LCD.GOODBYE1",
+				"value": "  VOLUMIO2!"
+			},
+			{
+				"id": "goodbye2",
+				"element": "input",
+				"type": "text",
+				"doc": "Goodbye message; shown on shutdown.",
+				"label": "TRANSLATE.LCD.GOODBYE2",
+				"value": "    And also"
+			},			
+			{
+				"id": "goodbye3",
+				"element": "input",
+				"type": "text",
+				"doc": "Goodbye message; shown on shutdown.",
+				"label": "TRANSLATE.LCD.GOODBYE3",
+				"value": "  Cheers mate!"
+			},
+			{
+				"id": "speed",
+				"element": "select",
+				"doc": "The scrolling speed of text on the LCD panel.",
+				"label": "TRANSLATE.LCD.SPEED",
+				"value": {
+					"value": 1,
+					"label": "10 (fast=default)"
+				},
+				"options": [
+					{
+						"value": 1,
+						"label": "1 (slow)"
+					},
+					{
+						"value": 2,
+						"label": "2"
+					},
+					{
+						"value": 3,
+						"label": "3"
+					},
+					{
+						"value": 4,
+						"label": "4"
+					},
+					{
+						"value": 5,
+						"label": "5"
+					},
+					{
+						"value": 6,
+						"label": "6"
+					},
+					{
+						"value": 7,
+						"label": "7"
+					},
+					{
+						"value": 8,
+						"label": "8"
+					},
+					{
+						"value": 9,
+						"label": "9"
+					},
+					{
+						"value": 10,
+						"label": "10 (fast=default)"
+					}	
+				]
+			}
+		]
 	},
 	{
-		"id": "section_soundconf",
+		"id": "section_displayconf",
 		"element": "section",
-		"label": "TRANSLATE.LCD.SOUNDCARD",
+		"label": "TRANSLATE.LCD.DISPLAYCONF",
 		"icon": "fa-music",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/Kodi",
-			"method": "updateSoundCard"
+			"endpoint": "miscellanea/HD44780",
+			"method": "updateLCDdConfig"
 		},
 		"saveButton": {
 			"label": "TRANSLATE.LCD.SAVE",
-			"data": ["soundcard_index"]
+			"data": [
+				"port",
+				"columns",
+				"rows",
+				"char_map"
+			]
 		},
-		"content": [{
-			"id": "soundcard_index",
-			"element": "select",
-			"doc": "The index of the soundcard you wish to use for the LCD client output.",
-			"label": "TRANSLATE.LCD.CARD_INDEX",
-			"value": {
-				"value": 0,
-				"label": "[0] Default rPi soundcard"
+		"content": [
+			{
+				"id": "port",
+				"element": "input",
+				"type": "text",
+				"doc": "The i2c port, use i2cdetect to find the correct one.",
+				"label": "TRANSLATE.LCD.PORT",
+				"value": "0x3F"
 			},
-			"options": []
-		}]
+			{
+				"id": "columns",
+				"element": "input",
+				"type": "text",
+				"doc": "The number of columns (in total) on the display(s).",
+				"label": "TRANSLATE.LCD.COLUMNS",
+				"value": "16"
+			},
+			{
+				"id": "rows",
+				"element": "input",
+				"type": "text",
+				"doc": "The number of rows (in total) on the display(s).",
+				"label": "TRANSLATE.LCD.ROWS",
+				"value": "2"
+			},
+			{
+				"id": "char_map",
+				"element": "select",
+				"doc": "The character mapping to use on the display, need for certain languages.",
+				"label": "TRANSLATE.LCD.CHAR_MAP",
+				"value": {
+					"value": 0,
+					"label": "hd44780_default"
+				},
+				"options": []
+			}
+		]
 	},
 	{
-		"id": "section_sampleconf",
+		"id": "section_driverconf",
 		"element": "section",
-		"label": "TRANSLATE.LCD.SAMPLING",
+		"label": "TRANSLATE.LCD.DRIVERCONF",
 		"icon": "fa-cogs",
 		"onSave": {
 			"type": "controller",
-			"endpoint": "miscellanea/Kodi",
-			"method": "updateBootConfig"
+			"endpoint": "miscellanea/HD44780",
+			"method": "updateLCDdConfig"
 		},
 		"saveButton": {
 			"label": "TRANSLATE.LCD.SAVE",
-			"data": ["sample_rate",
-			"bit_depth",
-			"channels"]
+			"data": [
+				"driver_path",
+				"connection_type"
+			]
 		},
-		"content": [{
-			"id": "sample_rate",
-			"element": "select",
-			"doc": "The number of samples per second.",
-			"label": "TRANSLATE.LCD.SAMPLE_RATE",
-			"value": {
-				"value": 48,
-				"label": "48000kHz"
+		"content": [
+			{
+				"id": "driver_path",
+				"element": "input",
+				"type": "text",
+				"doc": "The directory in which the driver is located.",
+				"label": "TRANSLATE.LCD.DRIVER_PATH",
+				"value": "/home/volumio/raspdrivers"
 			},
-			"options": []
-		},
-		{
-			"id": "bit_depth",
-			"element": "select",
-			"doc": "The number of bits of information in each sample.",
-			"label": "TRANSLATE.LCD.BIT_DEPTH",
-			"value": {
-				"value": 16,
-				"label": "16 bits"
-			},
-			"options": []
-		},
-		{
-			"id": "channels",
-			"element": "text",
-			"doc": "The amount of channels to output (2 = stereo).",
-			"label": "TRANSLATE.LCD.CHANNELS",
-			"value": "2"
-		}]
+			{
+				"id": "connection_type",
+				"element": "select",
+				"doc": "Connection type used for the LCD screen, either i2c or GPIO.",
+				"label": "TRANSLATE.LCD.CONNECTION_TYPE",
+				"value": {
+					"value": 0,
+					"label": "i2c"
+				},
+				"options": []
+				
+			}
+		]
 	}]
 }

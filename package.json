@@ -1,0 +1,22 @@
+{
+  "name": "HD44780",
+  "version": "1.0.1",
+  "description": "Plugin to use any HD44780 LCD screen",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Saiyato",
+  "license": "",
+  "volumio_info": {
+    "prettyName": "HD44780 LCD Plugin",
+    "icon": "fa fa-terminal",
+    "plugin_type": "miscellanea"
+  },
+  "dependencies": {
+        "fs-extra": "^0.28.0",
+        "kew": "^0.7.0",
+        "net": "^1.0.2",
+        "v-conf": "^0.10.0"
+      }
+}
