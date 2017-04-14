@@ -1,11 +1,11 @@
 {
 	"page": {
-		"label": "TRANSLATE.LCD.LCDCONF"
+		"label": "TRANSLATE.HD44780.LCDCONF"
 	},
 	"sections": [{
 		"id": "section_userconf",
 		"element": "section",
-		"label": "TRANSLATE.LCD.USERCONF",
+		"label": "TRANSLATE.HD44780.USERCONF",
 		"icon": "fa-music",
 		"onSave": {
 			"type": "controller",
@@ -13,7 +13,7 @@
 			"method": "updateLCDdConfig"
 		},
 		"saveButton": {
-			"label": "TRANSLATE.LCD.SAVE",
+			"label": "TRANSLATE.HD44780.SAVE",
 			"data": [
 				"hello0",
 				"hello1",
@@ -32,7 +32,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Hello message; shown on startup.",
-				"label": "TRANSLATE.LCD.HELLO0",
+				"label": "TRANSLATE.HD44780.HELLO0",
 				"value": "  Welcome to"
 			},
 			{
@@ -40,7 +40,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Hello message; shown on startup.",
-				"label": "TRANSLATE.LCD.HELLO1",
+				"label": "TRANSLATE.HD44780.HELLO1",
 				"value": "  VOLUMIO2!"
 			},
 			{
@@ -48,7 +48,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Hello message; shown on startup.",
-				"label": "TRANSLATE.LCD.HELLO2",
+				"label": "TRANSLATE.HD44780.HELLO2",
 				"value": "    And also"
 			},			
 			{
@@ -56,7 +56,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Hello message; shown on startup.",
-				"label": "TRANSLATE.LCD.HELLO3",
+				"label": "TRANSLATE.HD44780.HELLO3",
 				"value": "  Cheers mate!"
 			},
 			{
@@ -64,7 +64,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Goodbye message; shown on shutdown.",
-				"label": "TRANSLATE.LCD.GOODBYE0",
+				"label": "TRANSLATE.HD44780.GOODBYE0",
 				"value": "  Thanks for using"
 			},
 			{
@@ -72,7 +72,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Goodbye message; shown on shutdown.",
-				"label": "TRANSLATE.LCD.GOODBYE1",
+				"label": "TRANSLATE.HD44780.GOODBYE1",
 				"value": "  VOLUMIO2!"
 			},
 			{
@@ -80,7 +80,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Goodbye message; shown on shutdown.",
-				"label": "TRANSLATE.LCD.GOODBYE2",
+				"label": "TRANSLATE.HD44780.GOODBYE2",
 				"value": "    And also"
 			},			
 			{
@@ -88,67 +88,26 @@
 				"element": "input",
 				"type": "text",
 				"doc": "Goodbye message; shown on shutdown.",
-				"label": "TRANSLATE.LCD.GOODBYE3",
+				"label": "TRANSLATE.HD44780.GOODBYE3",
 				"value": "  Cheers mate!"
 			},
 			{
 				"id": "speed",
 				"element": "select",
 				"doc": "The scrolling speed of text on the LCD panel.",
-				"label": "TRANSLATE.LCD.SPEED",
+				"label": "TRANSLATE.HD44780.SPEED",
 				"value": {
-					"value": 1,
+					"value": 10,
 					"label": "10 (fast=default)"
 				},
-				"options": [
-					{
-						"value": 1,
-						"label": "1 (slow)"
-					},
-					{
-						"value": 2,
-						"label": "2"
-					},
-					{
-						"value": 3,
-						"label": "3"
-					},
-					{
-						"value": 4,
-						"label": "4"
-					},
-					{
-						"value": 5,
-						"label": "5"
-					},
-					{
-						"value": 6,
-						"label": "6"
-					},
-					{
-						"value": 7,
-						"label": "7"
-					},
-					{
-						"value": 8,
-						"label": "8"
-					},
-					{
-						"value": 9,
-						"label": "9"
-					},
-					{
-						"value": 10,
-						"label": "10 (fast=default)"
-					}	
-				]
+				"options": []
 			}
 		]
 	},
 	{
 		"id": "section_displayconf",
 		"element": "section",
-		"label": "TRANSLATE.LCD.DISPLAYCONF",
+		"label": "TRANSLATE.HD44780.DISPLAYCONF",
 		"icon": "fa-music",
 		"onSave": {
 			"type": "controller",
@@ -156,7 +115,7 @@
 			"method": "updateLCDdConfig"
 		},
 		"saveButton": {
-			"label": "TRANSLATE.LCD.SAVE",
+			"label": "TRANSLATE.HD44780.SAVE",
 			"data": [
 				"port",
 				"columns",
@@ -170,7 +129,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "The i2c port, use i2cdetect to find the correct one.",
-				"label": "TRANSLATE.LCD.PORT",
+				"label": "TRANSLATE.HD44780.PORT",
 				"value": "0x3F"
 			},
 			{
@@ -178,7 +137,7 @@
 				"element": "input",
 				"type": "text",
 				"doc": "The number of columns (in total) on the display(s).",
-				"label": "TRANSLATE.LCD.COLUMNS",
+				"label": "TRANSLATE.HD44780.COLUMNS",
 				"value": "16"
 			},
 			{
@@ -186,14 +145,14 @@
 				"element": "input",
 				"type": "text",
 				"doc": "The number of rows (in total) on the display(s).",
-				"label": "TRANSLATE.LCD.ROWS",
+				"label": "TRANSLATE.HD44780.ROWS",
 				"value": "2"
 			},
 			{
 				"id": "char_map",
 				"element": "select",
 				"doc": "The character mapping to use on the display, need for certain languages.",
-				"label": "TRANSLATE.LCD.CHAR_MAP",
+				"label": "TRANSLATE.HD44780.CHAR_MAP",
 				"value": {
 					"value": 0,
 					"label": "hd44780_default"
@@ -205,7 +164,7 @@
 	{
 		"id": "section_driverconf",
 		"element": "section",
-		"label": "TRANSLATE.LCD.DRIVERCONF",
+		"label": "TRANSLATE.HD44780.DRIVERCONF",
 		"icon": "fa-cogs",
 		"onSave": {
 			"type": "controller",
@@ -213,7 +172,7 @@
 			"method": "updateLCDdConfig"
 		},
 		"saveButton": {
-			"label": "TRANSLATE.LCD.SAVE",
+			"label": "TRANSLATE.HD44780.SAVE",
 			"data": [
 				"driver_path",
 				"connection_type"
@@ -225,14 +184,14 @@
 				"element": "input",
 				"type": "text",
 				"doc": "The directory in which the driver is located.",
-				"label": "TRANSLATE.LCD.DRIVER_PATH",
+				"label": "TRANSLATE.HD44780.DRIVER_PATH",
 				"value": "/home/volumio/raspdrivers"
 			},
 			{
 				"id": "connection_type",
 				"element": "select",
 				"doc": "Connection type used for the LCD screen, either i2c or GPIO.",
-				"label": "TRANSLATE.LCD.CONNECTION_TYPE",
+				"label": "TRANSLATE.HD44780.CONNECTION_TYPE",
 				"value": {
 					"value": 0,
 					"label": "i2c"

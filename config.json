@@ -33,7 +33,7 @@
   },
   "speed": {
     "type": "string",
-    "value": "10"
+    "value": "10 (fast=default)"
   },
   "port": {
     "type": "string",

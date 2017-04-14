@@ -107,7 +107,13 @@ ControllerHD44780.prototype.getUIConfig = function() {
 		uiconf.sections[0].content[5].value = self.config.get('goodbye1');
 		uiconf.sections[0].content[6].value = self.config.get('goodbye2');
 		uiconf.sections[0].content[7].value = self.config.get('goodbye3');
-		uiconf.sections[0].content[8].value = self.config.get('speed');
+		//uiconf.sections[0].content[8].value = self.config.get('speed');
+		for (var n = 1; n < 11; n++){
+			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[8].options', {
+				value: n,
+				label: n.toString()
+			});
+		}
 		
 		// Display configuration
 		uiconf.sections[1].content[0].value = self.config.get('port');
@@ -124,7 +130,7 @@ ControllerHD44780.prototype.getUIConfig = function() {
 		// Driver configuration
 		uiconf.sections[2].content[0].value = self.config.get('driver_path');
 		for (var n = 0; n < contypes.connections.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[0].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[1].options', {
 				value: contypes.connections[n].type,
 				label: contypes.connections[n].connection
 			});
