@@ -10,7 +10,7 @@ if [ ! -f /home/volumio/kodi-plugin.installing ]; then
 
 	pip install mpdlcd
 
-	wget -O /etc/mpdlcd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/mpdlcd.conf
+	wget -O /etc/mpdlcd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/Templates/mpdlcd.conf
 
 	# Driver installation
 	mkdir /home/volumio/raspdrivers
@@ -19,7 +19,7 @@ if [ ! -f /home/volumio/kodi-plugin.installing ]; then
 
 	# Remove and create LCDd.conf
 	rm /etc/LCDd.conf
-	wget -O /etc/LCDd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/LCDd.conf
+	wget -O /etc/LCDd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/Templates/LCDd.conf
 
 	rm /etc/init.d/mpdlcd
 	echo "#! /bin/sh
