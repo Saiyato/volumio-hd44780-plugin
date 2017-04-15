@@ -6,7 +6,7 @@
 		"id": "section_userconf",
 		"element": "section",
 		"label": "TRANSLATE.HD44780.USERCONF",
-		"icon": "fa-music",
+		"icon": "fa-user-o",
 		"onSave": {
 			"type": "controller",
 			"endpoint": "miscellanea/HD44780",
@@ -108,7 +108,7 @@
 		"id": "section_displayconf",
 		"element": "section",
 		"label": "TRANSLATE.HD44780.DISPLAYCONF",
-		"icon": "fa-music",
+		"icon": "fa-sliders",
 		"onSave": {
 			"type": "controller",
 			"endpoint": "miscellanea/HD44780",

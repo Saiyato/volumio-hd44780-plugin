@@ -10,7 +10,7 @@
   "license": "",
   "volumio_info": {
     "prettyName": "HD44780 LCD Plugin",
-    "icon": "fa fa-terminal",
+    "icon": "fa fa-microchip",
     "plugin_type": "miscellanea"
   },
   "dependencies": {
