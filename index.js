@@ -175,20 +175,48 @@ ControllerHD44780.prototype.getAdditionalConf = function (type, controller, data
 	return self.commandRouter.executeOnPlugin(type, controller, 'getConfigParam', data);
 };
 
-ControllerHD44780.prototype.restartKodi = function ()
+ControllerHD44780.prototype.updateUserConfig = function ()
+{
+	var self = this;	
+	var defer = libQ.defer();
+	
+	self.config.set('hello0', data['hello0'])
+	.then(function (restartService) {
+		self.restartKodi();
+	})
+	.fail(function(e)
+	{
+		defer.reject(new error());
+	});
+	
+	self.config.set('hello1', data['hello1']);
+	self.config.set('hello2', data['hello2']);
+	self.config.set('hello3', data['hello3']);
+	self.config.set('goodbye0', data['goodbye0']);
+	self.config.set('goodbye1', data['goodbye1']);
+	self.config.set('goodbye2', data['goodbye2']);
+	self.config.set('goodbye3', data['goodbye3']);
+	self.config.set('speed', data['speed']);
+	
+	defer.resolve();
+	
+	return defer.promise;
+}
+
+ControllerHD44780.prototype.restartLCDd = function ()
 {
 	var self = this;
 	var defer=libQ.defer();
 
-	exec("/usr/bin/sudo /bin/systemctl restart kodi.service", {uid:1000,gid:1000}, function (error, stdout, stderr) {
+	exec("/bin/echo volumio | /usr/bin/sudo -S /etc/init.d/LCDd restart", {uid:1000,gid:1000}, function (error, stdout, stderr) {
 		if (error !== null) {
-			self.commandRouter.pushConsoleMessage('The following error occurred while starting KODI: ' + error);
-			self.commandRouter.pushToastMessage('error', "Restart failed", "Restarting Kodi failed with error: " + error);
+			self.commandRouter.pushConsoleMessage('The following error occurred while restarting LCDd: ' + error);
+			self.commandRouter.pushToastMessage('error', "Restart failed", "Restarting LCDd failed with error: " + error);
 			defer.reject();
 		}
 		else {
-			self.commandRouter.pushConsoleMessage('KODI started');
-			self.commandRouter.pushToastMessage('success', "Restarted Kodi", "Restarted Kodi for the changes to take effect.");
+			self.commandRouter.pushConsoleMessage('LCDd restarted');
+			self.commandRouter.pushToastMessage('success', "LCDd", "Restarted LCDd for the changes to take effect.");
 			defer.resolve();
 		}
 	});
@@ -212,7 +240,36 @@ ControllerHD44780.prototype.updateSoundConfig = function (data)
 	.fail(function(e)
 	{
 		defer.reject(new error());
-	})
+	});
+	
+	return defer.promise;
+}
+
+ControllerHD44780.prototype.updateLCDdConfig = function (setting, value, file)
+{
+	var self = this;
+	var defer = libQ.defer();
+	var castValue;
+	
+	if(value == true || value == false)
+			castValue = ~~value;
+	else
+		castValue = value;
+	
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^" + setting + "=.*|" + setting + "=" + castValue + "|g' /etc/LCDd.conf";
+	
+	if(setting == "port")
+		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^" + setting + "=0x.*|" + setting + "=" + castValue + "|g' /etc/LCDd.conf";
+	
+	// add or replace in line
+	// var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed '/^" + setting + "=/{h;s/=.*/=" + castValue + "/};${x;/^$/{s//" + setting + "=" + castValue + "/;H};x}' -i " + file;
+	
+	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+			console.log(stderr);
+		
+		defer.resolve();
+	});
 	
 	return defer.promise;
 }
@@ -230,6 +287,39 @@ ControllerHD44780.prototype.updateConfigFile = function (setting, value, file)
 	
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed '/^" + setting + "=/{h;s/=.*/=" + castValue + "/};${x;/^$/{s//" + setting + "=" + castValue + "/;H};x}' -i " + file;
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+			console.log(stderr);
+		
+		defer.resolve();
+	});
+	
+	return defer.promise;
+}
+
+ControllerHD44780.prototype.updateKodiConfig = function (useKaliDelay)
+{
+	var self = this;
+	var defer = libQ.defer();
+	var command;
+	var secondCommand;
+	
+	if(useKaliDelay)
+	{
+		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.700000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
+		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.700000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
+	}
+	else
+	{
+		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.000000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
+		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.000000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
+	}
+	
+	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+			console.log(stderr);
+	});
+	
+	exec(secondCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
 			console.log(stderr);
 		
