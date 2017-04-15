@@ -11,9 +11,12 @@ Roadmap:
 4. Update dependencies
 5. Create package
 
-# LCDPROC
+# LCD daemon and proc
 
 I did not write nor contribute to lcdproc, so all credits go to them for enabling me to use it.
+You can start/stop the service by calling for example:
+
+$ service LCDd start
 
 You can test your LCD by calling lcdproc to print CPU info, note that it is a capital C.
 
