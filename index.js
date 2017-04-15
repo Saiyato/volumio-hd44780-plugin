@@ -92,6 +92,7 @@ ControllerHD44780.prototype.getUIConfig = function() {
 	
 	var charmappings = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/character_mappings.json'),  'utf8', {throws: false});
 	var contypes = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/connection_types.json'),  'utf8', {throws: false});
+	var scrolling = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/scroll_speeds.json'),  'utf8', {throws: false});
 	
     self.commandRouter.i18nJson(__dirname+'/i18n/strings_' + lang_code + '.json',
     __dirname + '/i18n/strings_en.json',
@@ -107,11 +108,10 @@ ControllerHD44780.prototype.getUIConfig = function() {
 		uiconf.sections[0].content[5].value = self.config.get('goodbye1');
 		uiconf.sections[0].content[6].value = self.config.get('goodbye2');
 		uiconf.sections[0].content[7].value = self.config.get('goodbye3');
-		//uiconf.sections[0].content[8].value = self.config.get('speed');
-		for (var n = 1; n < 11; n++){
+		for (var n = 0; n < scrolling.speeds.; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[8].options', {
-				value: n,
-				label: n.toString()
+				value: scrolling.speeds[n].value,
+				label: scrolling.speeds[n].label
 			});
 		}
 		

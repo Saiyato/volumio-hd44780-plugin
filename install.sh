@@ -1,38 +1,52 @@
 ## HD44780 installation script
-apt-get update
-apt-get --assume-yes install -y -q python-smbus i2c-tools lcdproc python-mpd python-pip zip
+echo "Installing HD44780 dependencies"
 
-pip install mpdlcd
+if [ ! -f /home/volumio/kodi-plugin.installing ]; then
 
-wget -O /etc/mpdlcd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/mpdlcd.conf
+	touch /home/volumio/hd44780-plugin.installing
+	
+	apt-get update
+	DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install -y -q python-smbus i2c-tools lcdproc python-mpd python-pip zip
 
-# Driver installation
-mkdir /home/volumio/raspdrivers
-# ARMv6 -> rPi 1 A/A+/B/B+/Zero
-wget -O /home/volumio/raspdrivers/hd44780.so https://github.com/Saiyato/volumio-hd44780-plugin/raw/master/Driver/hd44780.so
+	pip install mpdlcd
 
-# Remove and create LCDd.conf
-rm /etc/LCDd.conf
-wget -O /etc/LCDd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/LCDd.conf
+	wget -O /etc/mpdlcd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/mpdlcd.conf
 
-rm /etc/init.d/mpdlcd
-echo "#! /bin/sh
-case \"\$1\" in
-    start)
-        /usr/local/bin/mpdlcd --no-syslog &
-        ;;
-    stop)
-        killall mpdlcd
-        ;;
-    *)
-        echo \"Usage: /etc/init.d/mpdlcd {start|stop}\"
-        exit 1
-        ;;
-esac
-exit 0
-#" | sudo tee -a /etc/init.d/mpdlcd
+	# Driver installation
+	mkdir /home/volumio/raspdrivers
+	# ARMv6 -> rPi 1 A/A+/B/B+/Zero
+	wget -O /home/volumio/raspdrivers/hd44780.so https://github.com/Saiyato/volumio-hd44780-plugin/raw/master/Driver/hd44780.so
 
-chmod a+x /etc/init.d/mpdlcd
+	# Remove and create LCDd.conf
+	rm /etc/LCDd.conf
+	wget -O /etc/LCDd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/LCDd.conf
 
-update-rc.d mpdlcd defaults
-update-rc.d LCDd defaults
+	rm /etc/init.d/mpdlcd
+	echo "#! /bin/sh
+	case \"\$1\" in
+		start)
+			/usr/local/bin/mpdlcd --no-syslog &
+			;;
+		stop)
+			killall mpdlcd
+			;;
+		*)
+			echo \"Usage: /etc/init.d/mpdlcd {start|stop}\"
+			exit 1
+			;;
+	esac
+	exit 0
+	#" | sudo tee -a /etc/init.d/mpdlcd
+
+	chmod a+x /etc/init.d/mpdlcd
+
+	update-rc.d mpdlcd defaults
+	update-rc.d LCDd defaults
+	
+	rm /home/volumio/hd44780-plugin.installing
+	
+	#required to end the plugin install
+	echo "plugininstallend"
+else
+	echo "Plugin is already installing! Not continuing..."
+fi
