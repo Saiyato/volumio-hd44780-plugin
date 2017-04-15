@@ -17,7 +17,7 @@ wget -O /etc/LCDd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780
 
 rm /etc/init.d/mpdlcd
 echo "#! /bin/sh
-case \"$1\" in
+case \"\$1\" in
     start)
         /usr/local/bin/mpdlcd --no-syslog &
         ;;
