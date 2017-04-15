@@ -5,7 +5,7 @@
   },
   "hello1": {
     "type": "string",
-    "value": "  VOLUMIO2!"
+    "value": "   VOLUMIO2!"
   },
   "hello2": {
     "type": "string",
@@ -21,7 +21,7 @@
   },
   "goodbye1": {
     "type": "string",
-    "value": "  VOLUMIO2!"
+    "value": "   VOLUMIO2!"
   },
   "goodbye2": {
     "type": "string",

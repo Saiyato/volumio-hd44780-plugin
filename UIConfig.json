@@ -33,7 +33,7 @@
 				"type": "text",
 				"doc": "Hello message; shown on startup.",
 				"label": "TRANSLATE.HD44780.HELLO0",
-				"value": "  Welcome to"
+				"value": "   Welcome to"
 			},
 			{
 				"id": "hello1",
@@ -41,7 +41,7 @@
 				"type": "text",
 				"doc": "Hello message; shown on startup.",
 				"label": "TRANSLATE.HD44780.HELLO1",
-				"value": "  VOLUMIO2!"
+				"value": "   VOLUMIO2!"
 			},
 			{
 				"id": "hello2",
@@ -65,7 +65,7 @@
 				"type": "text",
 				"doc": "Goodbye message; shown on shutdown.",
 				"label": "TRANSLATE.HD44780.GOODBYE0",
-				"value": "  Thanks for using"
+				"value": "Thanks for using"
 			},
 			{
 				"id": "goodbye1",
@@ -73,7 +73,7 @@
 				"type": "text",
 				"doc": "Goodbye message; shown on shutdown.",
 				"label": "TRANSLATE.HD44780.GOODBYE1",
-				"value": "  VOLUMIO2!"
+				"value": "   VOLUMIO2!"
 			},
 			{
 				"id": "goodbye2",
