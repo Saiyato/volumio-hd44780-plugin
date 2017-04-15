@@ -108,7 +108,7 @@ ControllerHD44780.prototype.getUIConfig = function() {
 		uiconf.sections[0].content[5].value = self.config.get('goodbye1');
 		uiconf.sections[0].content[6].value = self.config.get('goodbye2');
 		uiconf.sections[0].content[7].value = self.config.get('goodbye3');
-		for (var n = 0; n < scrolling.speeds.; n++){
+		for (var n = 0; n < scrolling.speeds; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[8].options', {
 				value: scrolling.speeds[n].value,
 				label: scrolling.speeds[n].label
