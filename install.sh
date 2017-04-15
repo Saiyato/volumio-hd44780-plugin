@@ -1,7 +1,7 @@
 ## HD44780 installation script
 echo "Installing HD44780 dependencies"
 
-if [ ! -f /home/volumio/kodi-plugin.installing ]; then
+if [ ! -f /home/volumio/hd44780-plugin.installing ]; then
 
 	touch /home/volumio/hd44780-plugin.installing
 	
