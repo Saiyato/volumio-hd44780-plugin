@@ -1,9 +1,10 @@
 ## HD44780 installation script
 echo "Installing HD44780 dependencies"
+INSTALLING="/home/volumio/hd44780-plugin.installing"
 
-if [ ! -f /home/volumio/hd44780-plugin.installing ]; then
+if [ ! -f $INSTALLING ]; then
 
-	touch /home/volumio/hd44780-plugin.installing
+	touch $INSTALLING
 	
 	apt-get update
 	DEBIAN_FRONTEND=noninteractive apt-get --assume-yes install -y -q python-smbus i2c-tools lcdproc python-mpd python-pip zip
@@ -15,6 +16,7 @@ if [ ! -f /home/volumio/hd44780-plugin.installing ]; then
 	# Driver installation
 	mkdir /home/volumio/raspdrivers
 	# ARMv6 -> rPi 1 A/A+/B/B+/Zero
+	# ARMv7 -> rPi 2/3
 	wget -O /home/volumio/raspdrivers/hd44780.so https://github.com/Saiyato/volumio-hd44780-plugin/raw/master/Driver/hd44780.so
 
 	# Remove and create LCDd.conf
@@ -43,7 +45,7 @@ if [ ! -f /home/volumio/hd44780-plugin.installing ]; then
 	update-rc.d mpdlcd defaults
 	update-rc.d LCDd defaults
 	
-	rm /home/volumio/hd44780-plugin.installing
+	rm $INSTALLING
 	
 	#required to end the plugin install
 	echo "plugininstallend"

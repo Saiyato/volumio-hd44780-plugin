@@ -108,7 +108,7 @@ ControllerHD44780.prototype.getUIConfig = function() {
 		uiconf.sections[0].content[5].value = self.config.get('goodbye1');
 		uiconf.sections[0].content[6].value = self.config.get('goodbye2');
 		uiconf.sections[0].content[7].value = self.config.get('goodbye3');
-		for (var n = 0; n < scrolling.speeds; n++){
+		for (var n = 0; n < scrolling.speeds.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[8].options', {
 				value: scrolling.speeds[n].value,
 				label: scrolling.speeds[n].label
@@ -175,28 +175,23 @@ ControllerHD44780.prototype.getAdditionalConf = function (type, controller, data
 	return self.commandRouter.executeOnPlugin(type, controller, 'getConfigParam', data);
 };
 
-ControllerHD44780.prototype.updateUserConfig = function ()
+ControllerHD44780.prototype.updateUserConfig = function (data)
 {
 	var self = this;	
 	var defer = libQ.defer();
 	
 	self.config.set('hello0', data['hello0'])
-	.then(function (restartService) {
-		self.restartKodi();
-	})
-	.fail(function(e)
-	{
-		defer.reject(new error());
+	.then(function () {
+		self.config.set('hello1', data['hello1']);
+		defer.resolve();
 	});
-	
-	self.config.set('hello1', data['hello1']);
 	self.config.set('hello2', data['hello2']);
 	self.config.set('hello3', data['hello3']);
 	self.config.set('goodbye0', data['goodbye0']);
 	self.config.set('goodbye1', data['goodbye1']);
 	self.config.set('goodbye2', data['goodbye2']);
 	self.config.set('goodbye3', data['goodbye3']);
-	self.config.set('speed', data['speed']);
+	self.config.set('speed', data['speed'].value);
 	
 	defer.resolve();
 	
