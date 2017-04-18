@@ -108,24 +108,37 @@ ControllerHD44780.prototype.getUIConfig = function() {
 		uiconf.sections[0].content[5].value = self.config.get('goodbye1');
 		uiconf.sections[0].content[6].value = self.config.get('goodbye2');
 		uiconf.sections[0].content[7].value = self.config.get('goodbye3');
-		for (var n = 0; n < scrolling.speeds.length; n++){
+		for (var n = 0; n < scrolling.speeds.length; n++){			
 			self.configManager.pushUIConfigParam(uiconf, 'sections[0].content[8].options', {
 				value: scrolling.speeds[n].value,
 				label: scrolling.speeds[n].label
 			});
+			
+			if(scrolling.speeds[n].label == self.config.get('speed'))
+			{
+				uiconf.sections[0].content[8].value.value = scrolling.speeds[n].value;
+				uiconf.sections[0].content[8].value.label = scrolling.speeds[n].label;
+			}
 		}
 		
 		// Display configuration
 		uiconf.sections[1].content[0].value = self.config.get('port');
 		uiconf.sections[1].content[1].value = self.config.get('columns');
 		uiconf.sections[1].content[2].value = self.config.get('rows');
-				
 		for (var n = 0; n < charmappings.mappings.length; n++){
 			self.configManager.pushUIConfigParam(uiconf, 'sections[1].content[3].options', {
 				value: charmappings.mappings[n].cIndex,
 				label: charmappings.mappings[n].mapping
 			});
+			
+			if(charmappings.mappings[n].mapping == self.config.get('char_map'))
+			{
+				
+				uiconf.sections[1].content[3].value.value = charmappings.mappings[n].cIndex;
+				uiconf.sections[1].content[3].value.label = charmappings.mappings[n].mapping;
+			}
 		}
+		uiconf.sections[1].content[4].value = self.config.get('enable_mpdlcd');
 		
 		// Driver configuration
 		uiconf.sections[2].content[0].value = self.config.get('driver_path');
@@ -134,6 +147,12 @@ ControllerHD44780.prototype.getUIConfig = function() {
 				value: contypes.connections[n].type,
 				label: contypes.connections[n].connection
 			});
+			
+			if(contypes.connections[n].connection == self.config.get('connection_type'))
+			{
+				uiconf.sections[2].content[1].value.value = contypes.connections[n].type;
+				uiconf.sections[2].content[1].value.label = contypes.connections[n].connection;
+			}
 		}
 		
         defer.resolve(uiconf);
@@ -180,11 +199,8 @@ ControllerHD44780.prototype.updateUserConfig = function (data)
 	var self = this;	
 	var defer = libQ.defer();
 	
-	self.config.set('hello0', data['hello0'])
-	.then(function () {
-		self.config.set('hello1', data['hello1']);
-		defer.resolve();
-	});
+	self.config.set('hello0', data['hello0']);
+	self.config.set('hello1', data['hello1']);
 	self.config.set('hello2', data['hello2']);
 	self.config.set('hello3', data['hello3']);
 	self.config.set('goodbye0', data['goodbye0']);
@@ -193,10 +209,204 @@ ControllerHD44780.prototype.updateUserConfig = function (data)
 	self.config.set('goodbye3', data['goodbye3']);
 	self.config.set('speed', data['speed'].value);
 	
+	self.updateLCDdConfig('TitleSpeed', self.config.get('speed'))
+	.then(function (restart)
+	{
+		self.restartLCDd();
+	})
+	.fail(function ()
+	{
+		defer.reject(new Error());
+	});
+	
 	defer.resolve();
 	
 	return defer.promise;
-}
+};
+
+ControllerHD44780.prototype.updateDisplayConfig = function (data)
+{
+	var self = this;	
+	var defer = libQ.defer();
+	
+	self.config.set('port', data['port']);
+	self.config.set('columns', data['columns']);
+	self.config.set('rows', data['rows']);
+	self.config.set('char_map', data['char_map'].label);
+	self.config.set('enable_mpdlcd', data['enable_mpdlcd']);
+	
+	self.updateLCDdConfig('port', self.config.get('port'))
+	.then(function (c)
+	{
+		var size = self.config.get('columns') + "x" + self.config.get('rows');
+		self.updateLCDdConfig('Size', size);
+	})
+	.then(function (c)
+	{
+		self.updateLCDdConfig('CharMap', self.config.get('char_map'));
+	})
+	.then(function (mpdlcd)
+	{
+		self.logger.info("mpdlcd = " + self.config.get('enable_mpdlcd'));
+		
+		var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/mv /etc/init.d/mpdlcd.bak /etc/init.d/mpdlcd";
+		var sCommand = "/bin/echo volumio | /usr/bin/sudo -S /etc/init.d/mpdlcd start";
+		if(self.config.get('enable_mpdlcd') == false)
+		{
+			command = "/bin/echo volumio | /usr/bin/sudo -S /bin/mv /etc/init.d/mpdlcd /etc/init.d/mpdlcd.bak";
+			sCommand = "/bin/echo volumio | /usr/bin/sudo -S /etc/init.d/mpdlcd stop";
+				
+			exec(sCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+				console.log(stderr);
+			});
+				
+			exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+				console.log(stderr);
+			});
+		}
+		else
+		{			
+			exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+				console.log(stderr);
+			});
+			
+			exec(sCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+				console.log(stderr);
+			});
+		}
+		defer.resolve();
+	})
+	.then(function (control_mpdlcd)
+	{
+		
+	})
+	.then(function (restart)
+	{
+		self.restartLCDd();
+	})
+	.fail(function ()
+	{
+		defer.reject(new Error());
+	});
+	
+	defer.resolve();
+	
+	return defer.promise;
+};
+
+ControllerHD44780.prototype.updateDriverConfig = function (data)
+{
+	var self = this;	
+	var defer = libQ.defer();
+	
+	self.config.set('driver_path', data['driver_path']);
+	self.config.set('connection_type', data['connection_type'].label);
+	
+	self.config.set('deviating_pins', data['deviating_pins']);
+	
+	if(self.config.get('deviating_pins'))
+	{
+		self.config.set('pin_D7', data['pin_D7']);
+		self.config.set('pin_D6', data['pin_D6']);
+		self.config.set('pin_D5', data['pin_D5']);
+		self.config.set('pin_D4', data['pin_D4']);
+		self.config.set('pin_EN', data['pin_EN']);
+		self.config.set('pin_EN2', data['pin_EN2']);
+		self.config.set('pin_RS', data['pin_RS']);
+		self.config.set('pin_BL', data['pin_BL']);
+	}
+	else
+	{
+		// Revert to default
+		self.config.set('pin_D7', "18");
+		self.config.set('pin_D6', "23");
+		self.config.set('pin_D5', "24");
+		self.config.set('pin_D4', "25");
+		self.config.set('pin_EN', "8");
+		self.config.set('pin_EN2', "22");
+		self.config.set('pin_RS', "7");
+		self.config.set('pin_BL', "17");
+	}
+	
+	self.updateLCDdConfig('DriverPath', self.config.get('driver_path'))
+	.then(function (d7)
+	{
+		self.updateLCDdConfig('pin_D7', self.config.get('pin_D7'));
+	})
+	.then(function (d6)
+	{
+		self.updateLCDdConfig('pin_D6', self.config.get('pin_D6'));
+	})
+	.then(function (d5)
+	{
+		self.updateLCDdConfig('pin_D5', self.config.get('pin_D5'));
+	})
+	.then(function (d4)
+	{
+		self.updateLCDdConfig('pin_D4', self.config.get('pin_D4'));
+	})
+	.then(function (en)
+	{
+		self.updateLCDdConfig('pin_EN', self.config.get('pin_EN'));
+	})
+	.then(function (en2)
+	{
+		self.updateLCDdConfig('pin_EN2', self.config.get('pin_EN2'));
+	})
+	.then(function (rs)
+	{
+		self.updateLCDdConfig('pin_RS', self.config.get('pin_RS'));
+	})
+	.then(function (bl)
+	{
+		self.updateLCDdConfig('pin_BL', self.config.get('pin_BL'));
+	})
+	.then(function (restart)
+	{
+		self.restartLCDd();
+	})
+	.fail(function ()
+	{
+		defer.reject(new Error());
+	});
+	
+	defer.resolve();
+	
+	return defer.promise;
+};
+
+ControllerHD44780.prototype.updateLCDdConfig = function (setting, value)
+{
+	var self = this;
+	var defer = libQ.defer();
+	var castValue;
+	
+	if(value == true || value == false)
+			castValue = ~~value;
+	else
+		castValue = value;
+	
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^" + setting + "=.*|" + setting + "=" + castValue + "|g' /etc/LCDd.conf";
+	
+	if(setting == "port")
+		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^Port=0x.*|Port=" + castValue + "|g' /etc/LCDd.conf";
+	
+	// add or replace in line
+	// var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed '/^" + setting + "=/{h;s/=.*/=" + castValue + "/};${x;/^$/{s//" + setting + "=" + castValue + "/;H};x}' -i " + file;
+	
+	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+		if(error)
+			console.log(stderr);
+		
+		defer.resolve();
+	});
+	
+	return defer.promise;
+};
 
 ControllerHD44780.prototype.restartLCDd = function ()
 {
@@ -217,109 +427,4 @@ ControllerHD44780.prototype.restartLCDd = function ()
 	});
 
 	return defer.promise;
-}
-
-ControllerHD44780.prototype.updateSoundConfig = function (data)
-{
-	var self = this;
-	var defer = libQ.defer();
-	
-	self.config.set('usedac', data['usedac']);
-	self.config.set('kalidelay', data['kalidelay']);
-	self.logger.info("Successfully updated sound configuration");
-	
-	self.writeSoundConfig(data)
-	.then(function (restartService) {
-		self.restartKodi();
-	})
-	.fail(function(e)
-	{
-		defer.reject(new error());
-	});
-	
-	return defer.promise;
-}
-
-ControllerHD44780.prototype.updateLCDdConfig = function (setting, value, file)
-{
-	var self = this;
-	var defer = libQ.defer();
-	var castValue;
-	
-	if(value == true || value == false)
-			castValue = ~~value;
-	else
-		castValue = value;
-	
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^" + setting + "=.*|" + setting + "=" + castValue + "|g' /etc/LCDd.conf";
-	
-	if(setting == "port")
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^" + setting + "=0x.*|" + setting + "=" + castValue + "|g' /etc/LCDd.conf";
-	
-	// add or replace in line
-	// var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed '/^" + setting + "=/{h;s/=.*/=" + castValue + "/};${x;/^$/{s//" + setting + "=" + castValue + "/;H};x}' -i " + file;
-	
-	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-		
-		defer.resolve();
-	});
-	
-	return defer.promise;
-}
-
-ControllerHD44780.prototype.updateConfigFile = function (setting, value, file)
-{
-	var self = this;
-	var defer = libQ.defer();
-	var castValue;
-	
-	if(value == true || value == false)
-			castValue = ~~value;
-	else
-		castValue = value;
-	
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed '/^" + setting + "=/{h;s/=.*/=" + castValue + "/};${x;/^$/{s//" + setting + "=" + castValue + "/;H};x}' -i " + file;
-	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-		
-		defer.resolve();
-	});
-	
-	return defer.promise;
-}
-
-ControllerHD44780.prototype.updateKodiConfig = function (useKaliDelay)
-{
-	var self = this;
-	var defer = libQ.defer();
-	var command;
-	var secondCommand;
-	
-	if(useKaliDelay)
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.700000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.700000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-	}
-	else
-	{
-		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*audiodelay.*|<audiodelay>0.000000</audiodelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-		secondCommand = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|.*subtitledelay.*|<subtitledelay>0.000000</subtitledelay>|g' /home/kodi/.kodi/userdata/guisettings.xml";
-	}
-	
-	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-	});
-	
-	exec(secondCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-		
-		defer.resolve();
-	});
-	
-	return defer.promise;
-}
+};

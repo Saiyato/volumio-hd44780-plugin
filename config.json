@@ -51,6 +51,10 @@
     "type": "string",
     "value": "hd44780_default"
   },
+  "enable_mpdlcd": {
+    "type": "boolean",
+    "value": true
+  },
   "driver_path": {
     "type": "string",
     "value": "/home/volumio/raspdrivers/"
@@ -58,5 +62,41 @@
   "connection_type": {
     "type": "string",
     "value": "i2c"
+  },
+  "deviating_pins": {
+    "type": "boolean",
+    "value": false
+  },
+  "pin_D7": {
+    "type": "string",
+    "value": "18"
+  },
+  "pin_D6": {
+    "type": "string",
+    "value": "23"
+  },
+  "pin_D5": {
+    "type": "string",
+    "value": "24"
+  },
+  "pin_D4": {
+    "type": "string",
+    "value": "25"
+  },
+  "pin_EN": {
+    "type": "string",
+    "value": "8"
+  },
+  "pin_EN2": {
+    "type": "string",
+    "value": "22"
+  },
+  "pin_RS": {
+    "type": "string",
+    "value": "7"
+  },
+  "pin_BL": {
+    "type": "string",
+    "value": "17"
   }
 }

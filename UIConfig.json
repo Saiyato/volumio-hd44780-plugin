@@ -10,7 +10,7 @@
 		"onSave": {
 			"type": "controller",
 			"endpoint": "miscellanea/HD44780",
-			"method": "updateLCDdConfig"
+			"method": "updateUserConfig"
 		},
 		"saveButton": {
 			"label": "TRANSLATE.HD44780.SAVE",
@@ -112,7 +112,7 @@
 		"onSave": {
 			"type": "controller",
 			"endpoint": "miscellanea/HD44780",
-			"method": "updateLCDdConfig"
+			"method": "updateDisplayConfig"
 		},
 		"saveButton": {
 			"label": "TRANSLATE.HD44780.SAVE",
@@ -120,7 +120,8 @@
 				"port",
 				"columns",
 				"rows",
-				"char_map"
+				"char_map",
+				"enable_mpdlcd"
 			]
 		},
 		"content": [
@@ -158,6 +159,13 @@
 					"label": "hd44780_default"
 				},
 				"options": []
+			},
+			{
+			  "id":"enable_mpdlcd",
+			  "element": "switch",
+			  "doc": "MPDLCD will populate the LCD with the MPD status.",
+			  "label": "Enable MPDLCD",
+			  "value": true
 			}
 		]
 	},
@@ -169,13 +177,22 @@
 		"onSave": {
 			"type": "controller",
 			"endpoint": "miscellanea/HD44780",
-			"method": "updateLCDdConfig"
+			"method": "updateDriverConfig"
 		},
 		"saveButton": {
 			"label": "TRANSLATE.HD44780.SAVE",
 			"data": [
 				"driver_path",
-				"connection_type"
+				"connection_type",
+				"deviating_pins",
+				"pin_D7",
+				"pin_D6",
+				"pin_D5",
+				"pin_D4",
+				"pin_EN",
+				"pin_EN2",
+				"pin_RS",
+				"pin_BL"
 			]
 		},
 		"content": [
@@ -198,6 +215,109 @@
 				},
 				"options": []
 				
+			},
+			{
+			  "id":"deviating_pins",
+			  "element": "switch",
+			  "doc": "Define deviating GPIO pins to control the LCD screen.",
+			  "label": "Deviating pins",
+			  "value": false
+			},
+			{
+				"id": "pin_D7",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to D7 on the LCD screen.",
+				"label": "D7",
+				"value": "18",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
+			},
+			{
+				"id": "pin_D6",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to D6 on the LCD screen.",
+				"label": "D6",
+				"value": "23",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
+			},
+			{
+				"id": "pin_D5",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to D5 on the LCD screen.",
+				"label": "D5",
+				"value": "24",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
+			},
+			{
+				"id": "pin_D4",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to D4 on the LCD screen.",
+				"label": "D4",
+				"value": "25",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
+			},
+			{
+				"id": "pin_EN",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to EN (enable) on the LCD screen.",
+				"label": "EN",
+				"value": "8",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
+			},
+			{
+				"id": "pin_EN2",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to EN on a second controller, optional.",
+				"label": "EN2",
+				"value": "22",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
+			},
+			{
+				"id": "pin_RS",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to RS on the LCD screen.",
+				"label": "RS",
+				"value": "7",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
+			},
+			{
+				"id": "pin_BL",
+				"element": "input",
+				"type": "text",
+				"doc": "The GPIO pin which connects to BL on the LCD screen, optional (backlight).",
+				"label": "BL",
+				"value": "17",
+				"visibleIf": {
+						"field": "deviating_pins",
+						"value": true
+					}
 			}
 		]
 	}]
