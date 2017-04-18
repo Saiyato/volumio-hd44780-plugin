@@ -1,0 +1,38 @@
+<lcd>
+  <heartbeat>false</heartbeat>            
+  <scrolldelay>3</scrolldelay>            
+  <rows>2</rows>
+  <columns>16</columns>
+  <disableonplay></disableonplay>
+  <disableonplaydelay>0</disableonplaydelay>
+  <scrollseparator>+++</scrollseparator>
+  <progressbarsurroundings>on</progressbarsurroundings>
+  <allowemptylines>off</allowemptylines>
+  <extrabar1>progress</extrabar1>
+  <extrabar2>volume</extrabar2>
+  <centerbigdigits>on</centerbigdigits>
+  <navigation>
+     <line>$INFO[System.CurrentWindow] -> $INFO[System.CurrentControl]</line>
+     <line>$INFO[LCD.AlignCenter] $INFO[System.Time(HH:MM:SS)] - $INFO[System.Date(dd MMM yyyy)]</line>
+  </navigation>
+  <music>
+     <line>$INFO[LCD.PlayIcon] $INFO[LCD.AlignCenter] $INFO[MusicPlayer.Artist] - $INFO[MusicPlayer.Title]</line>
+     <line>$INFO[LCD.ProgressBar]</line>
+  </music>
+  <video>
+     <line>$INFO[LCD.AlignCenter] $INFO[Player.Title]</line>
+     <line>$INFO[LCD.ProgressBar]</line>
+  </video>
+ <tvshow>
+     <line>$INFO[LCD.AlignCenter] $INFO[VideoPlayer.TVShowTitle] - [ $INFO[Player.Title] ]</line>
+     <line>$INFO[LCD.ProgressBar]</line>
+  </tvshow>
+ <general>
+    <line>Kodi running...</line>
+    <line>$INFO[LCD.AlignCenter] $INFO[System.Time(HH:MM:SS)] - $INFO[System.Date(dd MMM yyyy)]</line>
+ </general>
+  <screensaver>
+    <line>$INFO[LCD.TimeWide21]</line>
+    <line>$INFO[LCD.TimeWide22]</line>
+  </screensaver>
+</lcd>
