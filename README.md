@@ -1,15 +1,15 @@
 # volumio-lcd-line-display-plugin
 Plugin for the HD44780 LCD for Volumio 2
 
-No working version!
+Package should install, i2c is confirmed to work on any Pi, GPIO only on Pi1 models (driver is recompiled, just needs testing).
 
 Roadmap:
 
-1. Write the configuration
-2. Write the index.js
+1. ~~Write the configuration~~
+2. ~~Write the index.js~~
 3. Update the installscript to final
-4. Update dependencies
-5. Create package
+4. Update dependencies for NodeJS (abandon use of LCDproc/mpdlcd to support overall functionality)
+5. Create final package
 
 # LCD daemon and proc
 
