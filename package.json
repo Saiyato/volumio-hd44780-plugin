@@ -1,6 +1,6 @@
 {
   "name": "HD44780",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Plugin to use any HD44780 LCD screen",
   "main": "index.js",
   "scripts": {

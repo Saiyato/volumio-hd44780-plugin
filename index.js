@@ -5,6 +5,7 @@ var libNet = require('net');
 var fs = require('fs-extra');
 var config = new (require('v-conf'))();
 var exec = require('child_process').exec;
+var sleep = require('sleep');
 
 
 // Define the ControllerHD44780 class
@@ -86,7 +87,7 @@ ControllerHD44780.prototype.getUIConfig = function() {
     var self = this;
 	var defer = libQ.defer();    
     var lang_code = this.commandRouter.sharedVars.get('language_code');
-
+	
 	self.getConf(this.configFile);
 	self.logger.info("Reloaded the config file");
 	
@@ -138,22 +139,37 @@ ControllerHD44780.prototype.getUIConfig = function() {
 				uiconf.sections[1].content[3].value.label = charmappings.mappings[n].mapping;
 			}
 		}
-		uiconf.sections[1].content[4].value = self.config.get('enable_mpdlcd');
+		
+		uiconf.sections[2].content[0].value = self.config.get('enable_mpdlcd');
 		
 		// Driver configuration
-		uiconf.sections[2].content[0].value = self.config.get('driver_path');
+		uiconf.sections[3].content[0].value = self.config.get('driver_path');
 		for (var n = 0; n < contypes.connections.length; n++){
-			self.configManager.pushUIConfigParam(uiconf, 'sections[2].content[1].options', {
+			self.configManager.pushUIConfigParam(uiconf, 'sections[3].content[1].options', {
 				value: contypes.connections[n].type,
 				label: contypes.connections[n].connection
 			});
 			
-			if(contypes.connections[n].connection == self.config.get('connection_type'))
+			var conn = self.config.get('connection_type');
+			if (conn == "raspberrypi")
+				conn = "GPIO";
+			
+			if(contypes.connections[n].connection == conn)
 			{
-				uiconf.sections[2].content[1].value.value = contypes.connections[n].type;
-				uiconf.sections[2].content[1].value.label = contypes.connections[n].connection;
+				uiconf.sections[3].content[1].value.value = contypes.connections[n].type;
+				uiconf.sections[3].content[1].value.label = contypes.connections[n].connection;
 			}
 		}
+		uiconf.sections[3].content[2].value = self.config.get('deviating_pins');
+		
+		uiconf.sections[3].content[3].value = self.config.get('pin_D7');
+		uiconf.sections[3].content[4].value = self.config.get('pin_D6');
+		uiconf.sections[3].content[5].value = self.config.get('pin_D5');
+		uiconf.sections[3].content[6].value = self.config.get('pin_D4');
+		uiconf.sections[3].content[7].value = self.config.get('pin_EN');
+		uiconf.sections[3].content[8].value = self.config.get('pin_EN2');
+		uiconf.sections[3].content[9].value = self.config.get('pin_RS');
+		uiconf.sections[3].content[10].value = self.config.get('pin_BL');
 		
         defer.resolve(uiconf);
     })
@@ -194,6 +210,14 @@ ControllerHD44780.prototype.getAdditionalConf = function (type, controller, data
 	return self.commandRouter.executeOnPlugin(type, controller, 'getConfigParam', data);
 };
 
+ControllerHD44780.prototype.getPlayerState = function ()
+{
+	var self = this;
+	
+	var vState = self.commandRouter.volumioGetState();
+	self.logger.info("State: " + JSON.stringify(vState));
+}
+
 ControllerHD44780.prototype.updateUserConfig = function (data)
 {
 	var self = this;	
@@ -233,7 +257,6 @@ ControllerHD44780.prototype.updateDisplayConfig = function (data)
 	self.config.set('columns', data['columns']);
 	self.config.set('rows', data['rows']);
 	self.config.set('char_map', data['char_map'].label);
-	self.config.set('enable_mpdlcd', data['enable_mpdlcd']);
 	
 	self.updateLCDdConfig('port', self.config.get('port'))
 	.then(function (c)
@@ -245,45 +268,6 @@ ControllerHD44780.prototype.updateDisplayConfig = function (data)
 	{
 		self.updateLCDdConfig('CharMap', self.config.get('char_map'));
 	})
-	.then(function (mpdlcd)
-	{
-		self.logger.info("mpdlcd = " + self.config.get('enable_mpdlcd'));
-		
-		var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/mv /etc/init.d/mpdlcd.bak /etc/init.d/mpdlcd";
-		var sCommand = "/bin/echo volumio | /usr/bin/sudo -S /etc/init.d/mpdlcd start";
-		if(self.config.get('enable_mpdlcd') == false)
-		{
-			command = "/bin/echo volumio | /usr/bin/sudo -S /bin/mv /etc/init.d/mpdlcd /etc/init.d/mpdlcd.bak";
-			sCommand = "/bin/echo volumio | /usr/bin/sudo -S /etc/init.d/mpdlcd stop";
-				
-			exec(sCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
-			if(error)
-				console.log(stderr);
-			});
-				
-			exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-			if(error)
-				console.log(stderr);
-			});
-		}
-		else
-		{			
-			exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-			if(error)
-				console.log(stderr);
-			});
-			
-			exec(sCommand, {uid:1000, gid:1000}, function (error, stout, stderr) {
-			if(error)
-				console.log(stderr);
-			});
-		}
-		defer.resolve();
-	})
-	.then(function (control_mpdlcd)
-	{
-		
-	})
 	.then(function (restart)
 	{
 		self.restartLCDd();
@@ -293,7 +277,34 @@ ControllerHD44780.prototype.updateDisplayConfig = function (data)
 		defer.reject(new Error());
 	});
 	
-	defer.resolve();
+	return defer.promise;
+};
+
+ControllerHD44780.prototype.updateMPDLCD = function (data)
+{
+	var self = this;	
+	var defer = libQ.defer();
+	
+	self.config.set('enable_mpdlcd', data['enable_mpdlcd']);
+	
+	self.controlService("stop", "mpdlcd")
+	.then(function (mpdlcd)
+	{
+		self.renameMPDLCD(self.config.get('enable_mpdlcd'));
+	})
+	.then(function (start_mpdlcd)
+	{
+		if(self.config.get('enable_mpdlcd') == true)
+		{
+			self.controlService("start", "mpdlcd");
+		}
+		else
+			return defer.resolve();
+	})
+	.fail(function ()
+	{
+		defer.reject(new Error());
+	});
 	
 	return defer.promise;
 };
@@ -303,13 +314,16 @@ ControllerHD44780.prototype.updateDriverConfig = function (data)
 	var self = this;	
 	var defer = libQ.defer();
 	
+	self.commandRouter.pushToastMessage('success', "Configuration", "Updating LCDd configuration.");
 	self.config.set('driver_path', data['driver_path']);
-	self.config.set('connection_type', data['connection_type'].label);
-	
+	self.config.set('connection_type', data['connection_type'].label);	
+	if(self.config.get('connection_type') == "GPIO")
+		self.config.set('connection_type', 'raspberrypi');
 	self.config.set('deviating_pins', data['deviating_pins']);
 	
 	if(self.config.get('deviating_pins'))
 	{
+		self.commandRouter.pushToastMessage('success', "Configuration", "Using user defined pins for LCDd.");
 		self.config.set('pin_D7', data['pin_D7']);
 		self.config.set('pin_D6', data['pin_D6']);
 		self.config.set('pin_D5', data['pin_D5']);
@@ -332,37 +346,50 @@ ControllerHD44780.prototype.updateDriverConfig = function (data)
 		self.config.set('pin_BL', "17");
 	}
 	
+	// The sleep commands are necessary to ensure all values are written to the config file
 	self.updateLCDdConfig('DriverPath', self.config.get('driver_path'))
+	.then(function (connType)
+	{
+		self.updateLCDdConfig('ConnectionType', self.config.get('connection_type'));
+	})
 	.then(function (d7)
 	{
+		sleep.sleep(2);
 		self.updateLCDdConfig('pin_D7', self.config.get('pin_D7'));
 	})
 	.then(function (d6)
 	{
+		sleep.sleep(2);
 		self.updateLCDdConfig('pin_D6', self.config.get('pin_D6'));
 	})
 	.then(function (d5)
 	{
+		sleep.sleep(2);	
 		self.updateLCDdConfig('pin_D5', self.config.get('pin_D5'));
 	})
 	.then(function (d4)
 	{
+		sleep.sleep(2);
 		self.updateLCDdConfig('pin_D4', self.config.get('pin_D4'));
 	})
 	.then(function (en)
 	{
+		sleep.sleep(2);
 		self.updateLCDdConfig('pin_EN', self.config.get('pin_EN'));
 	})
 	.then(function (en2)
 	{
+		sleep.sleep(2);
 		self.updateLCDdConfig('pin_EN2', self.config.get('pin_EN2'));
 	})
 	.then(function (rs)
 	{
+		sleep.sleep(2);
 		self.updateLCDdConfig('pin_RS', self.config.get('pin_RS'));
 	})
 	.then(function (bl)
 	{
+		sleep.sleep(2);
 		self.updateLCDdConfig('pin_BL', self.config.get('pin_BL'));
 	})
 	.then(function (restart)
@@ -389,22 +416,75 @@ ControllerHD44780.prototype.updateLCDdConfig = function (setting, value)
 			castValue = ~~value;
 	else
 		castValue = value;
-	
+
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^" + setting + "=.*|" + setting + "=" + castValue + "|g' /etc/LCDd.conf";
-	
+
 	if(setting == "port")
 		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^Port=0x.*|Port=" + castValue + "|g' /etc/LCDd.conf";
-	
+
 	// add or replace in line
 	// var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed '/^" + setting + "=/{h;s/=.*/=" + castValue + "/};${x;/^$/{s//" + setting + "=" + castValue + "/;H};x}' -i " + file;
-	
+
 	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
 		if(error)
 			console.log(stderr);
-		
+
 		defer.resolve();
 	});
 	
+	return defer.promise;
+};
+
+ControllerHD44780.prototype.renameMPDLCD = function (enable_mpdlcd)
+{
+	var self = this;
+	var defer = libQ.defer();
+	
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/mv /etc/init.d/mpdlcd.bak /etc/init.d/mpdlcd";
+	if(enable_mpdlcd == false)
+	{
+		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/mv /etc/init.d/mpdlcd /etc/init.d/mpdlcd.bak";
+		
+		sleep.sleep(2);
+		
+		exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+				console.log(stderr);
+		
+			defer.resolve();
+		});
+	}
+	else
+	{			
+		exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
+			if(error)
+				console.log(stderr);
+		
+			defer.resolve();
+		});
+	}
+	
+	return defer.promise;
+}
+
+ControllerHD44780.prototype.controlService = function (command, service)
+{
+	var self = this;
+	var defer=libQ.defer();
+
+	exec("/bin/echo volumio | /usr/bin/sudo -S /bin/systemctl " + command + " " + service, {uid:1000,gid:1000}, function (error, stdout, stderr) {
+		if (error !== null) {
+			self.commandRouter.pushConsoleMessage('The following error occurred when trying to ' + command + ' ' + service + ': ' + error);
+			self.commandRouter.pushToastMessage('error', "Failed", "Could not " + command + " " + service + ", it failed with error: " + error);
+			defer.reject();
+		}
+		else {
+			self.commandRouter.pushConsoleMessage(command + ' ' + service);
+			self.commandRouter.pushToastMessage('success', service, "Successfully sent a " + command + " command to " + service + ".");
+			defer.resolve();
+		}
+	});
+
 	return defer.promise;
 };
 
