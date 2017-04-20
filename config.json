@@ -35,7 +35,7 @@
     "type": "string",
     "value": "10 (fast=default)"
   },
-  "port": {
+  "address": {
     "type": "string",
     "value": "0x3F"
   },

@@ -7,6 +7,9 @@ var config = new (require('v-conf'))();
 var exec = require('child_process').exec;
 var sleep = require('sleep');
 
+// LCD Libraries
+var I2C = require('lcdi2c');
+var GPIO = require('lcd');
 
 // Define the ControllerHD44780 class
 module.exports = ControllerHD44780;
@@ -123,7 +126,7 @@ ControllerHD44780.prototype.getUIConfig = function() {
 		}
 		
 		// Display configuration
-		uiconf.sections[1].content[0].value = self.config.get('port');
+		uiconf.sections[1].content[0].value = self.config.get('address');
 		uiconf.sections[1].content[1].value = self.config.get('columns');
 		uiconf.sections[1].content[2].value = self.config.get('rows');
 		for (var n = 0; n < charmappings.mappings.length; n++){
@@ -236,7 +239,7 @@ ControllerHD44780.prototype.updateUserConfig = function (data)
 	self.updateLCDdConfig('TitleSpeed', self.config.get('speed'))
 	.then(function (restart)
 	{
-		self.restartLCDd();
+		self.controlService("restart", "LCDd");
 	})
 	.fail(function ()
 	{
@@ -253,12 +256,12 @@ ControllerHD44780.prototype.updateDisplayConfig = function (data)
 	var self = this;	
 	var defer = libQ.defer();
 	
-	self.config.set('port', data['port']);
+	self.config.set('address', data['address']);
 	self.config.set('columns', data['columns']);
 	self.config.set('rows', data['rows']);
 	self.config.set('char_map', data['char_map'].label);
 	
-	self.updateLCDdConfig('port', self.config.get('port'))
+	self.updateLCDdConfig('address', self.config.get('address'))
 	.then(function (c)
 	{
 		var size = self.config.get('columns') + "x" + self.config.get('rows');
@@ -270,7 +273,7 @@ ControllerHD44780.prototype.updateDisplayConfig = function (data)
 	})
 	.then(function (restart)
 	{
-		self.restartLCDd();
+		self.controlService("restart", "LCDd");
 	})
 	.fail(function ()
 	{
@@ -394,7 +397,7 @@ ControllerHD44780.prototype.updateDriverConfig = function (data)
 	})
 	.then(function (restart)
 	{
-		self.restartLCDd();
+		self.controlService("restart", "LCDd");
 	})
 	.fail(function ()
 	{
@@ -419,7 +422,7 @@ ControllerHD44780.prototype.updateLCDdConfig = function (setting, value)
 
 	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^" + setting + "=.*|" + setting + "=" + castValue + "|g' /etc/LCDd.conf";
 
-	if(setting == "port")
+	if(setting == "address")
 		command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|^Port=0x.*|Port=" + castValue + "|g' /etc/LCDd.conf";
 
 	// add or replace in line
@@ -488,7 +491,66 @@ ControllerHD44780.prototype.controlService = function (command, service)
 	return defer.promise;
 };
 
-ControllerHD44780.prototype.restartLCDd = function ()
+ControllerHD44780.prototype.printToDisplay = function ()
+{
+	var self = this;
+	return libQ.resolve();
+	var lcd;
+	
+	if(self.config.get('connection_type') == "i2c")
+	{
+		lcd = new I2C(1, self.config.get('address'), self.config.get('columns'), self.config.get('rows'));
+		
+		lcd.on();
+		lcd.clear();
+		lcd.println('Welcome', 1);
+		lcd.println('to the jungle', 1);
+	}
+	else
+	{
+		lcd = new GPIO({rs: self.config.get('pin_RS'), e: self.config.get('pin_EN'), data: [self.config.get('pin_D4'), self.config.get('pin_D5'), self.config.get('pin_D6'), self.config.get('pin_D7')], cols: self.config.get('columns'), rows: self.config.get('rows')});	
+		
+		lcd.on('ready', function () 
+		{
+		  lcd.setCursor(0, 0);
+		  lcd.print('Welcome', function (err) {
+			if (err) {
+			  throw err;
+			}
+
+			lcd.setCursor(0, 1);
+			lcd.print('to the jungle', function (err) {
+			  if (err) {
+				throw err;
+			  }
+
+			  lcd.close();
+			});
+		  });
+		});
+	}
+}
+
+function print(str, pos) 
+{
+  pos = pos || 0;
+
+  if (pos === str.length) {
+	pos = 0;
+  }
+
+  lcd.print(str[pos], function (err) {
+	if (err) {
+	  throw err;
+	}
+
+	setTimeout(function () {
+	  print(str, pos + 1);
+	}, 300);
+  });
+}
+
+ControllerHD44780.prototype.restartLCDdOBSOLETE = function ()
 {
 	var self = this;
 	var defer=libQ.defer();

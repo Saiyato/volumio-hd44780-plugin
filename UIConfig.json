@@ -117,20 +117,19 @@
 		"saveButton": {
 			"label": "TRANSLATE.HD44780.SAVE",
 			"data": [
-				"port",
+				"address",
 				"columns",
 				"rows",
-				"char_map",
-				"enable_mpdlcd"
+				"char_map"
 			]
 		},
 		"content": [
 			{
-				"id": "port",
+				"id": "address",
 				"element": "input",
 				"type": "text",
-				"doc": "TRANSLATE.HD44780.D_PORT",
-				"label": "TRANSLATE.HD44780.PORT",
+				"doc": "TRANSLATE.HD44780.D_ADDRESS",
+				"label": "TRANSLATE.HD44780.ADDRESS",
 				"value": "0x3F"
 			},
 			{
@@ -339,5 +338,23 @@
 					}
 			}
 		]
+	},
+	{
+		"id": "section_test",
+		"element": "section",
+		"label": "Test",
+		"icon": "fa-code",
+		"onSave": {
+			"type": "controller",
+			"endpoint": "miscellanea/HD44780",
+			"method": "printToDisplay"
+		},
+		"saveButton": {
+			"label": "Print to LCD",
+			"data": [
+				"enable_mpdlcd"
+			]
+		},
+		"content": []
 	}]
 }

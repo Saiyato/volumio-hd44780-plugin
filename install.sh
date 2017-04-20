@@ -22,6 +22,10 @@ if [ ! -f $INSTALLING ]; then
 	# Remove and create LCDd.conf
 	rm /etc/LCDd.conf
 	wget -O /etc/LCDd.conf https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/Templates/LCDd.conf
+	
+	# Place a patched wrapper to remove <Unknown> from the radio string
+	mv /usr/local/lib/python2.7/dist-packages/mpdlcd/mpdwrapper.py /usr/local/lib/python2.7/dist-packages/mpdlcd/mpdwrapper.py.bak
+	wget -O /usr/local/lib/python2.7/dist-packages/mpdlcd/mpdwrapper.py https://raw.githubusercontent.com/Saiyato/volumio-hd44780-plugin/master/Templates/mpdwrapper.py
 
 	rm /etc/init.d/mpdlcd
 	echo "#! /bin/sh
