@@ -5,7 +5,7 @@
   <columns>16</columns>
   <disableonplay></disableonplay>
   <disableonplaydelay>0</disableonplaydelay>
-  <scrollseparator>+++</scrollseparator>
+  <scrollseparator> | </scrollseparator>
   <progressbarsurroundings>on</progressbarsurroundings>
   <allowemptylines>off</allowemptylines>
   <extrabar1>progress</extrabar1>

@@ -497,14 +497,20 @@ ControllerHD44780.prototype.printToDisplay = function ()
 	return libQ.resolve();
 	var lcd;
 	
+	self.logger.info("Trying to create LCD object over " + self.config.get('connection_type'));
+	
 	if(self.config.get('connection_type') == "i2c")
 	{
-		lcd = new I2C(1, self.config.get('address'), self.config.get('columns'), self.config.get('rows'));
+		//lcd = new I2C(1, self.config.get('address'), self.config.get('columns'), self.config.get('rows'));
+		lcd = new I2C(1, 0x3F, 16, 2);
 		
+		self.logger.info("Printing over i2c");
 		lcd.on();
 		lcd.clear();
 		lcd.println('Welcome', 1);
 		lcd.println('to the jungle', 1);
+		
+		defer.resolve();
 	}
 	else
 	{
@@ -528,7 +534,11 @@ ControllerHD44780.prototype.printToDisplay = function ()
 			});
 		  });
 		});
+		
+		defer.resolve();
 	}
+	
+	return defer.promise;
 }
 
 function print(str, pos) 

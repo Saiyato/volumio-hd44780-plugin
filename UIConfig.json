@@ -351,9 +351,7 @@
 		},
 		"saveButton": {
 			"label": "Print to LCD",
-			"data": [
-				"enable_mpdlcd"
-			]
+			"data": []
 		},
 		"content": []
 	}]
