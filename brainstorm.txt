@@ -1,0 +1,8 @@
+sudo sed 's|.*enabled.*|&\n    enabled         "yes"|g' /etc/mpd.conf
+
+
+
+sudo sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=AUDIOPHONICS\&mode=read"|g' /etc/default/snapserver
+
+sed 's|^SNAPSERVER_OPTS.*|SNAPSERVER_OPTS="-d -s pipe:///tmp/snapfifo?name=SNAPPISERVER\&mode=read"|g' /etc/default/snapserver
+

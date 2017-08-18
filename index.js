@@ -94,9 +94,9 @@ ControllerHD44780.prototype.getUIConfig = function() {
 	self.getConf(this.configFile);
 	self.logger.info("Reloaded the config file");
 	
-	var charmappings = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/character_mappings.json'),  'utf8', {throws: false});
-	var contypes = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/connection_types.json'),  'utf8', {throws: false});
-	var scrolling = fs.readJsonSync(('/data/plugins/miscellanea/HD44780/scroll_speeds.json'),  'utf8', {throws: false});
+	var charmappings = fs.readJsonSync((__dirname + '/options/character_mappings.json'),  'utf8', {throws: false});
+	var contypes = fs.readJsonSync((__dirname + '/options/connection_types.json'),  'utf8', {throws: false});
+	var scrolling = fs.readJsonSync((__dirname + '/options/scroll_speeds.json'),  'utf8', {throws: false});
 	
     self.commandRouter.i18nJson(__dirname+'/i18n/strings_' + lang_code + '.json',
     __dirname + '/i18n/strings_en.json',
