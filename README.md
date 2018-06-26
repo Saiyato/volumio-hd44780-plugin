@@ -7,9 +7,10 @@ Roadmap:
 
 1. ~~Write the configuration~~
 2. ~~Write the index.js~~
-3. Update the installscript to final
-4. Update dependencies for NodeJS (abandon use of LCDproc/mpdlcd to support overall functionality)
-5. Create final package
+3. ~~Update the installscript to final~~
+4. ~~Update dependencies for NodeJS (abandon use of LCDproc/mpdlcd to support overall functionality)~~
+5. ~~Create final package~~
+6. Support 4-line display properly
 
 # LCD daemon and proc
 
@@ -41,3 +42,7 @@ I recommend the use of an i2c piggy back.
 Same as lcdproc, all credits go to the mpdlcd development team. You can start mpdlcd manually after installation to test its functionality.
 
 $ mpdlcd
+
+## Update 26-06-2018
+
+Removed the node_modules from the package, this will increase installation time, but installation will succeed in pre- and post 2.411 versions of Volumio.
