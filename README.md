@@ -1,3 +1,5 @@
+# D I S C O N T I N U E D
+
 # volumio-lcd-line-display-plugin
 Plugin for the HD44780 LCD for Volumio 2
 
